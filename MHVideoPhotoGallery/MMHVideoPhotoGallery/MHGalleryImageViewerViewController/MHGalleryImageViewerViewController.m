@@ -10,7 +10,6 @@
 #import "MHOverviewController.h"
 #import "MHTransitionShowShareView.h"
 #import "MHTransitionShowOverView.h"
-#import "MHGallerySharedManagerPrivate.h"
 
 @implementation MHPinchGestureRecognizer
 @end
@@ -877,7 +876,9 @@
                 [weakSelf.act stopAnimating];
             }];
             
-        }else{
+        }
+        else
+        {
             [MHGallerySharedManager.sharedManager startDownloadingThumbImage:self.item.URLString
                                                                 successBlock:^(UIImage *image,NSUInteger videoDuration,NSError *error) {
                                                                     if (!error) {

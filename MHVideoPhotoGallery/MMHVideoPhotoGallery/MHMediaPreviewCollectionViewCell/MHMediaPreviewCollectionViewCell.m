@@ -8,7 +8,7 @@
 
 #import "MHMediaPreviewCollectionViewCell.h"
 #import "MHGallery.h"
-#import "MHGallerySharedManagerPrivate.h"
+#import "MHGallerySharedManager.h"
 
 @implementation MHMediaPreviewCollectionViewCell
 

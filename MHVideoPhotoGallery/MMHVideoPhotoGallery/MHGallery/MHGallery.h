@@ -18,8 +18,6 @@
 #import "MHTransitionShowOverView.h"
 #import "MHGalleryImageViewerViewController.h"
 
-#import "SDWebImageDecoder.h"
-#import "SDImageCache.h"
 
 #define MHISIPAD ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
 #define kMHGalleryBundleName @"MHGallery.bundle"
@@ -53,9 +51,4 @@ extern NSString *const MHYoutubeBaseURL;
 extern NSString *const MHVimeoBaseURL;
 extern NSString *const MHAssetLibrary;
 extern NSString *const MHGalleryDurationData;
-
-@interface SDImageCache (MHPrivateMethods)
-- (NSString *)defaultCachePathForKey:(NSString *)key;
-- (NSString *)cachedFileNameForKey:(NSString *)key;
-@end
 

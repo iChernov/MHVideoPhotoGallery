@@ -7,7 +7,6 @@
 //
 
 #import "MHTransitionShowShareView.h"
-#import "MHGallerySharedManagerPrivate.h"
 
 @implementation MHTransitionShowShareView
 

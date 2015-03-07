@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "MHGallery.h"
 
-
 typedef NS_ENUM(NSUInteger, MHAssetImageType) {
     MHAssetImageTypeFull,
     MHAssetImageTypeThumb
@@ -50,6 +49,13 @@ typedef NS_ENUM(NSUInteger, MHYoutubeThumbQuality) {
     MHYoutubeThumbQualitySQ
 };
 
+@protocol MHGalleryImageProvider<NSObject>
+-(UIImage *)getImageForURLString:(NSString *)imageURLString;
+-(UIImage *)getThumbnailForImageWithURLString:(NSString *)imageURLString;
+-(UIImage *)getThumbnailForVideoWithURLString:(NSString *)videoURLString;
+-(void)saveImage:(UIImage *)image forURLString:(NSString *)imageURLString;
+@end
+
 
 @interface MHGallerySharedManager : NSObject
 
@@ -77,6 +83,8 @@ typedef NS_ENUM(NSUInteger, MHYoutubeThumbQuality) {
  *  default is MHYoutubeVideoQualityHD720
  */
 @property (nonatomic,assign) MHYoutubeVideoQuality youtubeVideoQuality;
+
+@property (nonatomic, strong) id<MHGalleryImageProvider> imageProvider;
 
 + (MHGallerySharedManager *)sharedManager;
 /**
@@ -116,6 +124,13 @@ typedef NS_ENUM(NSUInteger, MHYoutubeThumbQuality) {
 -(void)getImageFromAssetLibrary:(NSString*)urlString
                       assetType:(MHAssetImageType)type
                    successBlock:(void (^)(UIImage *image,NSError *error))succeedBlock;
+
+-(void)getImageFromURLString:(NSString*)urlString successBlock:(void (^)(UIImage *image,NSError *error))succeedBlock;
+
+-(void)getThumbFromURLString:(NSString*)urlString successBlock:(void (^)(UIImage *image,NSError *error))succeedBlock;
+
+-(void)getVideoThumbFromURLString:(NSString*)urlString successBlock:(void (^)(UIImage *image,NSError *error))succeedBlock;
+
 /**
  *  Returns all MHGalleryObjects for a Youtube channel
  *
@@ -126,5 +141,8 @@ typedef NS_ENUM(NSUInteger, MHYoutubeThumbQuality) {
 -(void)getMHGalleryObjectsForYoutubeChannel:(NSString*)channelName
                                   withTitle:(BOOL)withTitle
                                successBlock:(void (^)(NSArray *MHGalleryObjects,NSError *error))succeedBlock;
+
++ (NSString*)stringForMinutesAndSeconds:(NSInteger)seconds
+                               addMinus:(BOOL)addMinus;
 
 @end

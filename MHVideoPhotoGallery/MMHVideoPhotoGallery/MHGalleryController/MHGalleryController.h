@@ -20,9 +20,9 @@
 -(void)galleryController:(MHGalleryController*)galleryController didShowIndex:(NSInteger)index;
 @end
 
+
+
 @protocol MHGalleryDataSource<NSObject>
-
-
 
 @required
 /**
@@ -43,6 +43,7 @@
 
 @property (nonatomic,assign) id<MHGalleryDelegate>              galleryDelegate;
 @property (nonatomic,assign) id<MHGalleryDataSource>            dataSource;
+
 @property (nonatomic,assign) BOOL                               autoplayVideos; //Default NO
 @property (nonatomic,assign) NSInteger                          presentationIndex; //From which index you want to present the Gallery.
 @property (nonatomic,strong) UIImageView                        *presentingFromImageView;

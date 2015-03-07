@@ -34,7 +34,9 @@
     return self;
 }
 
-+(instancetype)galleryWithPresentationStyle:(MHGalleryViewMode)presentationStyle{
++ (instancetype)galleryWithPresentationStyle:(MHGalleryViewMode)presentationStyle andImageProvider:(id<MHGalleryImageProvider>)imageProvider
+{
+    [MHGallerySharedManager.sharedManager setImageProvider:imageProvider];
     return [self.class.alloc initWithPresentationStyle:presentationStyle];
 }
 

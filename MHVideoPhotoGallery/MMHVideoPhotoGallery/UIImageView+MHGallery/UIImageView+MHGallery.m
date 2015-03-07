@@ -8,8 +8,6 @@
 
 #import "UIImageView+MHGallery.h"
 #import "MHGallery.h"
-#import "SDImageCache.h"
-#import "UIImageView+WebCache.h"
 
 @implementation UIImageView (MHGallery)
 
@@ -22,7 +20,7 @@
                                                         successBlock:^(UIImage *image, NSUInteger videoDuration, NSError *error) {
                                                             
                                                             if (!weakSelf) return;
-                                                            dispatch_main_sync_safe(^{
+                                                            dispatch_sync(dispatch_get_main_queue(), (^{
                                                                 if (!weakSelf) return;
                                                                 if (image){
                                                                     weakSelf.image = image;
@@ -30,7 +28,7 @@
                                                                 }
                                                                 if (succeedBlock) {                                                                     succeedBlock(image,videoDuration,error);
                                                                 }
-                                                            });
+                                                            }));
                                                         }];
 }
 
@@ -64,13 +62,12 @@
             placeholderURL = item.URLString;
         }
         
-        [self sd_setImageWithURL:[NSURL URLWithString:toLoadURL]
-                placeholderImage:[SDImageCache.sharedImageCache imageFromDiskCacheForKey:placeholderURL]
-                       completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-                           if (succeedBlock) {
-                               succeedBlock (image,error);
-                           }
-                       }];
+        [MHGallerySharedManager.sharedManager getImageFromURLString:toLoadURL successBlock:^(UIImage *image, NSError *error) {
+            self.image = image;
+                if (succeedBlock) {
+                    succeedBlock (image,error);
+                }
+        }];
     }
 }
 
@@ -81,7 +78,8 @@
     __weak typeof(self) weakSelf = self;
     
     if (!weakSelf) return;
-    dispatch_main_sync_safe(^{
+    
+    dispatch_sync(dispatch_get_main_queue(), ^{
         weakSelf.image = image;
         [weakSelf setNeedsLayout];
         if (succeedBlock) {

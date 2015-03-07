@@ -7,7 +7,7 @@
 //
 
 #import "MHTransitionShowOverView.h"
-#import "MHGallerySharedManagerPrivate.h"
+#import "MHGallerySharedManager.h"
 
 @interface MHTransitionShowOverView()
 @property (nonatomic,strong) UIToolbar *toolbar;

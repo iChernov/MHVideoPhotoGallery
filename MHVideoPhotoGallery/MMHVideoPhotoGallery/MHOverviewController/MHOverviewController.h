@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "MHGallery.h"
 #import "MHGalleryImageViewerViewController.h"
-#import "SDWebImageManager.h"
 #import "MHTransitionShowDetail.h"
 #import "MHMediaPreviewCollectionViewCell.h"
 

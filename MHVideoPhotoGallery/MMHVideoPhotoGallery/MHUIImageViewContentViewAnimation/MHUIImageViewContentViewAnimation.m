@@ -8,7 +8,6 @@
 
 #import "MHUIImageViewContentViewAnimation.h"
 #import "MHGallery.h"
-#import "MHGallerySharedManagerPrivate.h"
 
 @interface MHUIImageViewContentViewAnimation ()
 

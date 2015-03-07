@@ -9,12 +9,9 @@
 #import "MHShareViewController.h"
 #import "MHMediaPreviewCollectionViewCell.h"
 #import "MHGallery.h"
-#import "UIImageView+WebCache.h"
 #import "MHTransitionShowShareView.h"
 #import <CoreImage/CoreImage.h>
 #import <ImageIO/ImageIO.h>
-#import "MHGallerySharedManagerPrivate.h"
-#import "SDImageCache.h"
 #import <MobileCoreServices/UTCoreTypes.h>
 #import "MHGallery.h"
 
@@ -640,9 +637,7 @@
             if ([dataURL.image isKindOfClass:UIImage.class]) {
                 UIImage *image = dataURL.image;
                 if (image.images) {
-                    [picker addAttachmentData:[NSData dataWithContentsOfFile:[SDImageCache.sharedImageCache defaultCachePathForKey:dataURL.URL]]
-                               typeIdentifier:(__bridge NSString *)kUTTypeGIF
-                                     filename:@"animated.gif"];
+#warning no gif support
                 }else{
                     [picker addAttachmentData:UIImageJPEGRepresentation(dataURL.image, 1.0)
                                typeIdentifier:@"public.image"
@@ -671,9 +666,8 @@
             if ([dataURL.image isKindOfClass:UIImage.class]) {
                 UIImage *image = dataURL.image;
                 if (image.images) {
-                    [picker addAttachmentData:[NSData dataWithContentsOfFile:[[SDImageCache sharedImageCache] defaultCachePathForKey:dataURL.URL]]
-                                     mimeType:@"image/gif"
-                                     fileName:@"pic.gif"];
+#warning no gif support
+
                 }else{
                     [picker addAttachmentData:UIImageJPEGRepresentation(dataURL.image, 1.0)
                                      mimeType:@"image/jpeg"
@@ -846,9 +840,7 @@
             }else if (item.image) {
                 [self addDataToDownloadArray:item.image];
             }else{
-                
-                [SDWebImageManager.sharedManager downloadImageWithURL:[NSURL URLWithString:item.URLString] options:SDWebImageContinueInBackground progress:nil completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
-                    
+                [MHGallerySharedManager.sharedManager getImageFromURLString:item.URLString successBlock:^(UIImage *image, NSError *error) {
                     MHImageURL *imageURLMH = [MHImageURL.alloc initWithURL:item.URLString
                                                                      image:image];
                     [weakSelf addDataToDownloadArray:imageURLMH];
@@ -942,7 +934,7 @@
                 NSData *data;
                 
                 if (imageToStore.images) {
-                    data = [NSData dataWithContentsOfFile:[[SDImageCache sharedImageCache] defaultCachePathForKey:dataURL.URL]];
+#warning no gif support
                 }else{
                     data = UIImageJPEGRepresentation(imageToStore, 1.0);
                 }
