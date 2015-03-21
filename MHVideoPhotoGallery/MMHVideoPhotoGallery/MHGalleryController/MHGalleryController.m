@@ -40,6 +40,11 @@
     return [self.class.alloc initWithPresentationStyle:presentationStyle];
 }
 
++ (instancetype)galleryWithPresentationStyle:(MHGalleryViewMode)presentationStyle
+{
+    return [self.class.alloc initWithPresentationStyle:presentationStyle];
+}
+
 -(void)setGalleryItems:(NSArray *)galleryItems{
     self.overViewViewController.galleryItems = galleryItems;
     self.imageViewerViewController.galleryItems = galleryItems;

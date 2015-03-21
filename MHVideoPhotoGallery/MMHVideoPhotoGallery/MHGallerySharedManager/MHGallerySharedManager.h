@@ -95,7 +95,7 @@ typedef NS_ENUM(NSUInteger, MHYoutubeThumbQuality) {
  *  @param succeedBlock returns the image the duration of the video and an error
  */
 -(void)startDownloadingThumbImage:(NSString*)urlString
-                     successBlock:(void (^)(UIImage *image,NSUInteger videoDuration,NSError *error))succeedBlock;
+                     successBlock:(void (^)(UIImage *image,NSError *error))succeedBlock;
 
 
 -(BOOL)isUIViewControllerBasedStatusBarAppearance;

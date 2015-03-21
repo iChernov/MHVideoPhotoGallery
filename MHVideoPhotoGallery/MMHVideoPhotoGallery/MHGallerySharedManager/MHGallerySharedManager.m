@@ -68,22 +68,19 @@
 -(void)getImageFromURLString:(NSString*)urlString
                 successBlock:(void (^)(UIImage *image,NSError *error))succeedBlock
 {
-    UIImage *image = [self.imageProvider getImageForURLString:urlString];
-    succeedBlock(image, nil);
+    [self.imageProvider getImageForURLString:urlString withProgressBlock:nil andCompletion:succeedBlock];
 }
 
 -(void)getThumbFromURLString:(NSString*)urlString
                 successBlock:(void (^)(UIImage *image,NSError *error))succeedBlock
 {
-    UIImage *image = [self.imageProvider getThumbnailForImageWithURLString:urlString];
-    succeedBlock(image, nil);
+    [self.imageProvider getThumbnailForImageWithURLString:urlString withProgressBlock:nil andCompletion:succeedBlock];
 }
 
 -(void)getVideoThumbFromURLString:(NSString*)urlString
                 successBlock:(void (^)(UIImage *image,NSError *error))succeedBlock
 {
-    UIImage *image = [self.imageProvider getThumbnailForVideoWithURLString:urlString];
-    succeedBlock(image, nil);
+    [self.imageProvider getThumbnailForVideoWithURLString:urlString withProgressBlock:nil andCompletion:succeedBlock];
 }
 
 -(BOOL)isUIViewControllerBasedStatusBarAppearance{
@@ -95,66 +92,10 @@
 }
 
 -(void)createThumbURL:(NSString*)urlString
-         successBlock:(void (^)(UIImage *image,NSUInteger videoDuration,NSError *error))succeedBlock{
-    
-    UIImage *image = [self.imageProvider getImageForURLString:urlString];
-    NSMutableDictionary *dict = [NSMutableDictionary.alloc initWithDictionary:[NSUserDefaults.standardUserDefaults objectForKey:MHGalleryDurationData]];
-    if (!dict) {
-        dict = NSMutableDictionary.new;
-    }
-    if (image) {
-        succeedBlock(image,[dict[urlString] integerValue],nil);
-    }else{
-        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-            NSURL *url = [NSURL URLWithString:urlString];
-            AVURLAsset *asset=[AVURLAsset.alloc  initWithURL:url options:nil];
-            
-            AVAssetImageGenerator *generator = [AVAssetImageGenerator.alloc initWithAsset:asset];
-            generator.appliesPreferredTrackTransform = YES;
-            CMTime thumbTime = CMTimeMakeWithSeconds(0,40);
-            CMTime videoDurationTime = asset.duration;
-            NSUInteger videoDurationTimeInSeconds = CMTimeGetSeconds(videoDurationTime);
-            
-            NSMutableDictionary *dictToSave = [self durationDict];
-            if (videoDurationTimeInSeconds !=0) {
-                dictToSave[urlString] = @(videoDurationTimeInSeconds);
-                [self setObjectToUserDefaults:dictToSave];
-            }
-            if(self.webPointForThumb == MHWebPointForThumbStart){
-                thumbTime = CMTimeMakeWithSeconds(0,40);
-            }else if(self.webPointForThumb == MHWebPointForThumbMiddle){
-                thumbTime = CMTimeMakeWithSeconds(videoDurationTimeInSeconds/2,40);
-            }else if(self.webPointForThumb == MHWebPointForThumbEnd){
-                thumbTime = CMTimeMakeWithSeconds(videoDurationTimeInSeconds,40);
-            }
-            
-            AVAssetImageGeneratorCompletionHandler handler = ^(CMTime requestedTime, CGImageRef im, CMTime actualTime, AVAssetImageGeneratorResult result, NSError *error){
-                
-                if (result != AVAssetImageGeneratorSucceeded || im == nil) {
-                    dispatch_async(dispatch_get_main_queue(), ^(void){
-                        succeedBlock(nil,0,error);
-                    });
-                }else{
-                    UIImage *image = [UIImage imageWithCGImage:im];
-                    if (image != nil) {
-                        [self.imageProvider saveImage:image forURLString:urlString];
-                        dispatch_async(dispatch_get_main_queue(), ^(void){
-                            succeedBlock(image,videoDurationTimeInSeconds,nil);
-                        });
-                    }
-                }
-            };
-            if (self.webThumbQuality == MHWebThumbQualityHD720) {
-                generator.maximumSize = CGSizeMake(720, 720);
-            }else if (self.webThumbQuality == MHWebThumbQualityMedium) {
-                generator.maximumSize = CGSizeMake(420 ,420);
-            }else if(self.webThumbQuality == MHWebThumbQualitySmall) {
-                generator.maximumSize = CGSizeMake(220 ,220);
-            }
-            [generator generateCGImagesAsynchronouslyForTimes:@[[NSValue valueWithCMTime:thumbTime]]
-                                            completionHandler:handler];
-        });
-    }
+         successBlock:(void (^)(UIImage *image,NSError *error))succeedBlock
+{
+    __weak __typeof(self)weakSelf = self;
+    [self.imageProvider getImageForURLString:urlString withProgressBlock:nil andCompletion:succeedBlock];
 }
 
 -(NSString*)languageIdentifier{
@@ -312,11 +253,9 @@
 }
 
 -(void)startDownloadingThumbImage:(NSString*)urlString
-                     successBlock:(void (^)(UIImage *image,NSUInteger videoDuration,NSError *error))succeedBlock{
+                     successBlock:(void (^)(UIImage *image,NSError *error))succeedBlock{
     [self createThumbURL:urlString
-            successBlock:^(UIImage *image, NSUInteger videoDuration, NSError *error) {
-                succeedBlock(image,videoDuration,error);
-            }];
+            successBlock:succeedBlock];
 }
 
 @end

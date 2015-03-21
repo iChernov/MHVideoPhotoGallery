@@ -253,8 +253,8 @@
     
     MHMediaPreviewCollectionViewCell *cell = (MHMediaPreviewCollectionViewCell*)[collectionView cellForItemAtIndexPath:indexPath];
     MHGalleryItem *item =  [self itemForIndex:indexPath.row];
-    
-    [MHGallerySharedManager.sharedManager getThumbFromURLString:item.URLString successBlock:^(UIImage *thumbImage, NSError *error) {
+
+    [MHGallerySharedManager.sharedManager getThumbFromURLString:item.thumbnailURL successBlock:^(UIImage *thumbImage, NSError *error) {
         if (thumbImage) {
             cell.thumbnail.image = thumbImage;
         }
@@ -270,6 +270,7 @@
             [weakSelf pushToImageViewerForIndexPath:indexPath];
         }
     }];
+    
 }
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldShowMenuForItemAtIndexPath:(NSIndexPath *)indexPath {

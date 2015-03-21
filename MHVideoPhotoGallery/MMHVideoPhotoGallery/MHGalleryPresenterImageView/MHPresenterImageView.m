@@ -103,7 +103,6 @@
     self.presenter.presentingImageView = self;
     self.presenter.interactive = YES;
     
-    
     MHGalleryController *gallery = [MHGalleryController galleryWithPresentationStyle:MHGalleryViewModeImageViewerNavigationBarShown];
     gallery.galleryItems = self.galleryItems;
     gallery.presentingFromImageView = self;

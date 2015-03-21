@@ -777,6 +777,7 @@
         self.imageView.contentMode = UIViewContentModeScaleAspectFit;
         self.imageView.clipsToBounds = YES;
         self.imageView.tag = 506;
+
         [self.scrollView addSubview:self.imageView];
         
         self.pinch = [MHPinchGestureRecognizer.alloc initWithTarget:self action:@selector(userDidPinch:)];
@@ -879,12 +880,12 @@
         }
         else
         {
-            [MHGallerySharedManager.sharedManager startDownloadingThumbImage:self.item.URLString
-                                                                successBlock:^(UIImage *image,NSUInteger videoDuration,NSError *error) {
+            [MHGallerySharedManager.sharedManager startDownloadingThumbImage:self.item.thumbnailURL
+                                                                successBlock:^(UIImage *image,NSError *error) {
                                                                     if (!error) {
                                                                         [weakSelf handleGeneratedThumb:image
-                                                                                         videoDuration:videoDuration
-                                                                                             urlString:self.item.URLString];
+                                                                                         videoDuration:[self.item.videoDuration integerValue]
+                                                                                             urlString:self.item.thumbnailURL];
                                                                     }else{
                                                                         [weakSelf changeToErrorImage];
                                                                     }

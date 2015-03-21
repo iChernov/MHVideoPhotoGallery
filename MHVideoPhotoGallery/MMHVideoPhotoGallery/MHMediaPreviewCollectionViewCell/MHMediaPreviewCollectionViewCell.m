@@ -82,13 +82,13 @@
     [self.activityIndicator startAnimating];
 
     if (galleryItem.galleryType == MHGalleryTypeVideo) {
-        [MHGallerySharedManager.sharedManager startDownloadingThumbImage:galleryItem.URLString
-                                                            successBlock:^(UIImage *image,NSUInteger videoDuration,NSError *error) {
+        [MHGallerySharedManager.sharedManager startDownloadingThumbImage:galleryItem.thumbnailURL
+                                                            successBlock:^(UIImage *image,NSError *error) {
                                                                 if (error) {
                                                                     weakSelf.thumbnail.backgroundColor = UIColor.whiteColor;
                                                                     weakSelf.thumbnail.image = MHGalleryImage(@"error");
                                                                 }else{
-                                                                    weakSelf.videoDurationLength.text  = [MHGallerySharedManager stringForMinutesAndSeconds:videoDuration addMinus:NO];
+                                                                    weakSelf.videoDurationLength.text  = [MHGallerySharedManager stringForMinutesAndSeconds:[galleryItem.videoDuration integerValue] addMinus:NO];
                                                                     
                                                                     weakSelf.thumbnail.image = image;
                                                                     weakSelf.videoIcon.hidden = NO;

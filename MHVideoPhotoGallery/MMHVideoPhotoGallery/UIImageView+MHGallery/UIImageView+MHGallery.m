@@ -11,26 +11,6 @@
 
 @implementation UIImageView (MHGallery)
 
--(void)setThumbWithURL:(NSString*)URL
-          successBlock:(void (^)(UIImage *image,NSUInteger videoDuration,NSError *error))succeedBlock{
-    
-    __weak typeof(self) weakSelf = self;
-    
-    [MHGallerySharedManager.sharedManager startDownloadingThumbImage:URL
-                                                        successBlock:^(UIImage *image, NSUInteger videoDuration, NSError *error) {
-                                                            
-                                                            if (!weakSelf) return;
-                                                            dispatch_sync(dispatch_get_main_queue(), (^{
-                                                                if (!weakSelf) return;
-                                                                if (image){
-                                                                    weakSelf.image = image;
-                                                                    [weakSelf setNeedsLayout];
-                                                                }
-                                                                if (succeedBlock) {                                                                     succeedBlock(image,videoDuration,error);
-                                                                }
-                                                            }));
-                                                        }];
-}
 
 -(void)setImageForMHGalleryItem:(MHGalleryItem*)item
                       imageType:(MHImageType)imageType
@@ -60,14 +40,23 @@
         if (imageType == MHImageTypeThumb) {
             toLoadURL = item.thumbnailURL;
             placeholderURL = item.URLString;
-        }
-        
-        [MHGallerySharedManager.sharedManager getImageFromURLString:toLoadURL successBlock:^(UIImage *image, NSError *error) {
-            self.image = image;
+            [MHGallerySharedManager.sharedManager getThumbFromURLString:toLoadURL successBlock:^(UIImage *image, NSError *error) {
+                self.image = image;
                 if (succeedBlock) {
                     succeedBlock (image,error);
                 }
-        }];
+            }];
+        }
+        else
+        {
+            [MHGallerySharedManager.sharedManager getImageFromURLString:toLoadURL successBlock:^(UIImage *image, NSError *error) {
+                self.image = image;
+                if (succeedBlock) {
+                    succeedBlock (image,error);
+                }
+            }];
+        }
+        
     }
 }
 

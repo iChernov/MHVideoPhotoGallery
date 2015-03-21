@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MHGallery.h"
+#import "MHGallerySharedManager.h"
 
 @class MHGalleryController;
 @class MHOverviewController;
@@ -39,6 +40,19 @@
 - (NSInteger)numberOfItemsInGallery:(MHGalleryController*)galleryController;
 @end
 
+@protocol MHGalleryImageProvider<NSObject>
+-(void)getImageForURLString:(NSString *)imageURLString
+          withProgressBlock:(void(^)(long long receivedSize, long long expectedSize)) progressBlock
+              andCompletion:(void(^)(UIImage *image, NSError *error)) completion;
+-(void)getThumbnailForImageWithURLString:(NSString *)imageURLString
+                       withProgressBlock:(void(^)(long long receivedSize, long long expectedSize)) progressBlock
+                           andCompletion:(void(^)(UIImage *image, NSError *error)) completion;
+-(void)getThumbnailForVideoWithURLString:(NSString *)videoURLString
+                       withProgressBlock:(void(^)(long long receivedSize, long long expectedSize)) progressBlock
+                           andCompletion:(void(^)(UIImage *image, NSError *error)) completion;
+-(void)saveImage:(UIImage *)image forURLString:(NSString *)imageURLString;
+@end
+
 @interface MHGalleryController : UINavigationController <MHGalleryDataSource>
 
 @property (nonatomic,assign) id<MHGalleryDelegate>              galleryDelegate;
@@ -56,6 +70,8 @@
 @property (nonatomic,assign) MHGalleryViewMode                  presentationStyle;
 @property (nonatomic,assign) UIStatusBarStyle                   preferredStatusBarStyleMH;
 
+
+
 /**
  *  There are 3 types to present MHGallery. 
  *
@@ -70,7 +86,8 @@
  *  @return MHGalleryController
  */
 - (id)initWithPresentationStyle:(MHGalleryViewMode)presentationStyle;
-+(instancetype)galleryWithPresentationStyle:(MHGalleryViewMode)presentationStyle;
++ (instancetype)galleryWithPresentationStyle:(MHGalleryViewMode)presentationStyle andImageProvider:(id<MHGalleryImageProvider>)imageProvider;
++ (instancetype)galleryWithPresentationStyle:(MHGalleryViewMode)presentationStyle;
 
 @property (nonatomic, copy) void (^finishedCallback)(NSInteger currentIndex,UIImage *image,MHTransitionDismissMHGallery *interactiveTransition,MHGalleryViewMode viewMode);
 
