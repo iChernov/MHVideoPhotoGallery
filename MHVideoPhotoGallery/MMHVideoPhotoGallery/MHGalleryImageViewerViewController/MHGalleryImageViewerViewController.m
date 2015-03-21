@@ -167,8 +167,8 @@
     if (self.UICustomization.hideShare) {
         
         self.shareBarButton = [UIBarButtonItem.alloc initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
-                                                                             target:self
-                                                                             action:nil];
+                                                                          target:self
+                                                                          action:nil];
         self.shareBarButton.width = 30;
     }
     
@@ -395,9 +395,9 @@
         }else{
             [self changeToPlayButton];
         }
-        self.toolbar.items = @[self.shareBarButton,flex,self.leftBarButton,flex,self.playStopBarButton,flex,self.rightBarButton,flex,fixed];
+        self.toolbar.items = @[self.shareBarButton,flex,self.leftBarButton,flex, self.playStopBarButton,flex,self.rightBarButton,flex,fixed];
     }else{
-        self.toolbar.items =@[self.shareBarButton,flex,self.leftBarButton,flex,self.rightBarButton,flex,fixed];
+        self.toolbar.items =@[self.shareBarButton,flex,self.leftBarButton, flex,self.rightBarButton,flex,fixed];
     }
 }
 
@@ -441,7 +441,7 @@
     if (theCurrentViewController.moviePlayer) {
         [theCurrentViewController removeAllMoviePlayerViewsAndNotifications];
     }
-
+    
     NSUInteger indexPage = theCurrentViewController.pageIndex;
     MHImageViewController *imageViewController =[MHImageViewController imageViewControllerForMHMediaItem:[self itemForIndex:indexPage-1] viewController:self];
     imageViewController.pageIndex = indexPage-1;
@@ -469,7 +469,7 @@
     if (theCurrentViewController.moviePlayer) {
         [theCurrentViewController removeAllMoviePlayerViewsAndNotifications];
     }
-
+    
     NSUInteger indexPage = theCurrentViewController.pageIndex;
     MHImageViewController *imageViewController =[MHImageViewController imageViewControllerForMHMediaItem:[self itemForIndex:indexPage+1] viewController:self];
     imageViewController.pageIndex = indexPage+1;
@@ -777,7 +777,7 @@
         self.imageView.contentMode = UIViewContentModeScaleAspectFit;
         self.imageView.clipsToBounds = YES;
         self.imageView.tag = 506;
-
+        
         [self.scrollView addSubview:self.imageView];
         
         self.pinch = [MHPinchGestureRecognizer.alloc initWithTarget:self action:@selector(userDidPinch:)];
@@ -805,12 +805,14 @@
         
         [self.view addGestureRecognizer:imageTap];
         
-        self.act = [UIActivityIndicatorView.alloc initWithFrame:self.view.bounds];
+        CGRect rect = CGRectMake(0, self.view.bounds.size.height - 150, self.view.bounds.size.width, 150);
+        self.act = [UIActivityIndicatorView.alloc initWithFrame:rect];
+        [self.act setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin)];
         [self.act startAnimating];
         self.act.hidesWhenStopped =YES;
-        self.act.tag =507;
-        self.act.autoresizingMask =UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
-        [self.scrollView addSubview:self.act];
+        self.act.tag = 507;
+        [self.view addSubview:self.act];
+        
         if (self.item.galleryType != MHGalleryTypeImage) {
             [self addPlayButtonToView];
             
@@ -866,17 +868,21 @@
         
         
         
-        if (self.item.galleryType == MHGalleryTypeImage) {
-            
-            
-            [self.imageView setImageForMHGalleryItem:self.item imageType:MHImageTypeFull successBlock:^(UIImage *image, NSError *error) {
+        if (self.item.galleryType == MHGalleryTypeImage)
+        {
+            [self.imageView setImageForMHGalleryItem:self.item imageType:MHImageTypeThumb successBlock:^(UIImage *image, NSError *error) {
                 if (!image) {
                     weakSelf.scrollView.maximumZoomScale  =1;
                     [weakSelf changeToErrorImage];
                 }
-                [weakSelf.act stopAnimating];
+                [weakSelf.imageView setImageForMHGalleryItem:self.item imageType:MHImageTypeFull successBlock:^(UIImage *image, NSError *error) {
+                    if (!image) {
+                        weakSelf.scrollView.maximumZoomScale  =1;
+                        [weakSelf changeToErrorImage];
+                    }
+                    [weakSelf.act stopAnimating];
+                }];
             }];
-            
         }
         else
         {
@@ -1104,26 +1110,26 @@
 }
 
 - (void)loadStateDidChange:(NSNotification *)notification{
-	MPMoviePlayerController *player = notification.object;
-	MPMovieLoadState loadState = player.loadState;
-	if (loadState & MPMovieLoadStatePlayable){
+    MPMoviePlayerController *player = notification.object;
+    MPMovieLoadState loadState = player.loadState;
+    if (loadState & MPMovieLoadStatePlayable){
         if (!self.videoWasPlayable) {
             [self performSelectorOnMainThread:@selector(changeToPlayable)
                                    withObject:nil
                                 waitUntilDone:YES];
         }
         
-	}
+    }
     if (loadState & MPMovieLoadStatePlaythroughOK){
         self.videoDownloaded = YES;
-	}
-	
-	if (loadState & MPMovieLoadStateStalled){
+    }
+    
+    if (loadState & MPMovieLoadStateStalled){
         
         [self performSelectorOnMainThread:@selector(stopMovie)
                                withObject:nil
                             waitUntilDone:YES];
-	}
+    }
 }
 
 -(void)updateTimerLabels{
@@ -1322,7 +1328,7 @@
     self.scrollView.backgroundColor = [self.viewController.UICustomization MHGalleryBackgroundColorForViewMode:[self currentViewMode]];
     
     if (self.viewController.isHiddingToolBarAndNavigationBar) {
-        self.act.color = [UIColor whiteColor];
+        self.act.color = [UIColor lightGrayColor];
         self.moviePlayerToolBarTop.alpha =0;
     }else{
         if (self.moviePlayerToolBarTop) {
@@ -1332,7 +1338,7 @@
                 }
             }
         }
-        self.act.color = [UIColor blackColor];
+        self.act.color = [UIColor lightGrayColor];
     }
     if (self.item.galleryType == MHGalleryTypeVideo) {
         
@@ -1370,7 +1376,7 @@
     if (viewMode == MHGalleryViewModeImageViewerNavigationBarShown) {
         alpha= 1;
     }
-
+    
     self.moviePlayer.backgroundView.backgroundColor = [self.viewController.UICustomization MHGalleryBackgroundColorForViewMode:viewMode];
     self.scrollView.backgroundColor = [self.viewController.UICustomization MHGalleryBackgroundColorForViewMode:viewMode];
     self.viewController.pageViewController.view.backgroundColor = [self.viewController.UICustomization MHGalleryBackgroundColorForViewMode:viewMode];
@@ -1380,11 +1386,11 @@
     
     self.viewController.descriptionView.alpha =alpha;
     self.viewController.descriptionViewBackground.alpha =alpha;
-
+    
     UIInterfaceOrientation currentOrientation = UIApplication.sharedApplication.statusBarOrientation;
     BOOL isLandscape = UIInterfaceOrientationIsLandscape(currentOrientation);
     BOOL isPhone = UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPhone;
-
+    
     if (MHGalleryOSVersion >= 8.0 && isLandscape && isPhone) {
         alpha = 0;
     }
@@ -1500,7 +1506,7 @@
     self.playButton.frame = CGRectMake(self.viewController.view.frame.size.width/2-36, self.viewController.view.frame.size.height/2-36, 72, 72);
     self.scrollView.contentSize = CGSizeMake(self.view.bounds.size.width*self.scrollView.zoomScale, self.view.bounds.size.height*self.scrollView.zoomScale);
     self.imageView.frame = CGRectMake(0,0 , self.scrollView.contentSize.width,self.scrollView.contentSize.height);
-
+    
 }
 
 -(void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
@@ -1533,6 +1539,7 @@
         self.imageView.frame = frameToCenter;
     }
 }
+
 -(void)scrollViewDidZoom:(UIScrollView *)scrollView{
     [self centerImageView];
 }
