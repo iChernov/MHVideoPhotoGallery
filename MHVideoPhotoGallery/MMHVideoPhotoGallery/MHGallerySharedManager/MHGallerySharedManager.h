@@ -50,12 +50,17 @@ typedef NS_ENUM(NSUInteger, MHYoutubeThumbQuality) {
 };
 
 @protocol MHGalleryImageProvider<NSObject>
--(UIImage *)getImageForURLString:(NSString *)imageURLString;
--(UIImage *)getThumbnailForImageWithURLString:(NSString *)imageURLString;
--(UIImage *)getThumbnailForVideoWithURLString:(NSString *)videoURLString;
+-(void)getImageForURLString:(NSString *)imageURLString
+          withProgressBlock:(void(^)(long long receivedSize, long long expectedSize)) progressBlock
+              andCompletion:(void(^)(UIImage *image, NSError *error)) completion;
+-(void)getThumbnailForImageWithURLString:(NSString *)imageURLString
+                       withProgressBlock:(void(^)(long long receivedSize, long long expectedSize)) progressBlock
+                           andCompletion:(void(^)(UIImage *image, NSError *error)) completion;
+-(void)getThumbnailForVideoWithURLString:(NSString *)videoURLString
+                       withProgressBlock:(void(^)(long long receivedSize, long long expectedSize)) progressBlock
+                           andCompletion:(void(^)(UIImage *image, NSError *error)) completion;
 -(void)saveImage:(UIImage *)image forURLString:(NSString *)imageURLString;
 @end
-
 
 @interface MHGallerySharedManager : NSObject
 
